@@ -1,0 +1,41 @@
+export interface SampleData {
+  batchCode: string; // 批次编号
+  createTime: string;// 创建时间
+  createMethod: string;// 创建方式
+  isAnalyzed: string; // 创建后是否被分析
+  sampleNo: string; // 样本原编号
+  experimentNo: string; // 实验编号
+  errorLabel: string; // 防错标签
+  sampleType: string; // 样本类型
+  testItem: string; // 检测项目
+  oneStepNGSRespiratory: string; // 一步法NGS呼吸道
+  i5Code: string; // I5编号
+  i5Sequence: string; // I5序列
+  myi5_77: string; // MYI5_77
+  name: string; // 姓名
+  gender: string; // 性别
+  sampleVolume: number; // 样本量
+  age: number; // 年龄
+  bedNumber: string; // 住院号
+  contactNumber: string; // 联系电话
+  sendingUnit: string; // 送检单位
+  sendingDepartment: string; // 送检科室
+  sampler: string; // 送检医师
+  samplingDate: string; // 采样日期
+  collectDate: string; // 接收日期
+  clinicalManifestation: string; // 临床表现
+  detectionResult: string; // 检测结果
+  wbc: number; // WBC(10^9/L)
+  lymphocytePercentage: number; // 淋巴细胞(%)
+  gr: number; // 中粒细胞(个)
+  crp: number; // CRP(mg/L)
+  pct: number; // PCT(ng/ml)
+  focusPathogen: string; // 重点关注病原体
+  nucleicAcidConcentration: number; // 核酸浓度
+  libraryConcentration: number; // 文库浓度
+  reagentBatch: string; // 提取试剂批次
+  libraryReagentBatch: string; // 建库试剂批次
+  onDeviceLr: string; // 上机试剂
+  extractor: string; // 提取实验员
+  remarks: string; // 备注
+}

@@ -1,0 +1,122 @@
+@import "transition/index.less";
+@import "var/index.less";
+@import "public.less";
+@import "./theme.less";
+@import "./entry.css";
+
+// input:-webkit-autofill {
+//   box-shadow: 0 0 0 1000px white inset !important;
+// }
+:root {
+  --primary: #e61f42;
+}
+
+@primary: 347 77% 60%;
+
+@bRadius: 8px;
+@sRadius: 4px;
+
+.ant-modal-header {
+  border-radius: 8px 8px 0 0;
+}
+
+.login-background {
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(154deg, #07070915 30%, hsl(@primary / 30%) 48%, #07070915 64%);
+  filter: blur(100px);
+}
+
+// .ant-popover-inner {
+//   padding: 0 !important;
+// }
+
+:-webkit-autofill {
+  transition: background-color 5000s ease-in-out 0s !important;
+}
+
+html {
+  overflow: hidden;
+  text-size-adjust: 100%;
+  background-color: #eee;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  overflow-x: hidden;
+  color: var(--text-color);
+
+  &.color-weak {
+    filter: invert(80%);
+  }
+
+  &.gray-mode {
+    filter: grayscale(100%);
+    filter: progid:dximagetransform.microsoft.basicimage(grayscale=1);
+  }
+}
+
+body {
+  min-width: 1000px;
+  overflow-x: auto;
+}
+
+a:focus,
+a:active,
+button,
+div,
+svg,
+span {
+  outline: none;
+}
+
+/** 打包后夜间模式样式有问题 在这里覆盖 */
+html[data-theme="dark"] {
+  /** 菜单边框 */
+  ul li {
+    border: none;
+  }
+
+  ul li:hover {
+    color: inherit !important;
+    border: none;
+    box-shadow: none;
+  }
+
+  /** 日期输入框 */
+  .ant-picker-input > input {
+    border: none;
+  }
+
+  .ant-picker-input > input:focus {
+    color: inherit !important;
+    box-shadow: none;
+  }
+}
+
+.ant-input-number {
+  width: 100%;
+}
+
+.ant-picker {
+  width: 100%;
+}
+
+.ant-btn-link {
+  color: var(--primary);
+
+  &:hover {
+    color: var(--primary) !important;
+  }
+}
+
+// 保持 和 windi 一样的全局样式，减少升级带来的影响
+ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
