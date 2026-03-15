@@ -11,6 +11,7 @@ import { createAsyncComponent } from '@/utils/factory/createAsyncComponent'
 import SessionTimeoutLogin from '@/views/base/login/SessionTimeoutLogin.vue'
 import { openWindow } from '@/utils'
 import { SITE_URL } from '@/settings/siteSetting'
+import SimpleAIAssistant from '@/components/AiAssistant/src/SimpleAIAssistant.vue'
 
 defineOptions({ name: 'LayoutFeatures' })
 const LayoutLockPage = createAsyncComponent(() => import('@/views/base/lock/index.vue'))
@@ -41,17 +42,19 @@ const getIsFixedSettingDrawer = computed(() => {
 <template>
   <LayoutLockPage />
   <FloatButton.BackTop v-if="getUseOpenBackTop" :target="getTarget" />
-  <FloatButton
-    shape="circle"
-    type="primary"
-    :badge="{ dot: true }"
-    :style="{ right: '64px' }"
-    @click="openWindow(SITE_URL)"
-  >
-    <template #icon>
-      <QuestionCircleOutlined />
-    </template>
-  </FloatButton>
+<!--  <FloatButton-->
+<!--    shape="circle"-->
+<!--    type="primary"-->
+<!--    :badge="{ dot: true }"-->
+<!--    :style="{ right: '64px' }"-->
+<!--    @click="openWindow(SITE_URL)"-->
+<!--  >-->
+<!--    <template #icon>-->
+<!--      <QuestionCircleOutlined />-->
+<!--    </template>-->
+<!--  </FloatButton>-->
+  <!-- AI助手 -->
+  <SimpleAIAssistant />
   <SettingDrawer
     v-if="getIsFixedSettingDrawer"
     class="absolute top-[45%] z-10 flex cursor-pointer items-center justify-items-center rounded-l-md rounded-r-none p-2.5"
