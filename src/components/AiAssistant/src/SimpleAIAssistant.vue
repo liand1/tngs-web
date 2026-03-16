@@ -243,6 +243,7 @@ const handleSendMessage = async () => {
   } finally {
     loading.value = false
     scrollToBottom()
+    inputValue.value = ''
   }
 }
 
