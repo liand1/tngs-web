@@ -233,7 +233,7 @@ function levellingReads_tblRende(record: Recordable) {
     return '';
   }
   const match = record.levellingReads.toString().match(/\(([^)]*%)\)/);
-  return match ? match[1] : ''; // 如果有匹配，返回括号内的百分比，否则返回空字符串
+  return match ? match[1] : '-'; // 如果有匹配，返回括号内的百分比，否则返回空字符串
 }
 
 //删除

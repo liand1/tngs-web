@@ -10,7 +10,7 @@ REJECTED = 3, // 未通过 -->
           <a-button v-auth="['lims:sample:create']" @click="handleCreate(taskDetail.batchCode)">
             为当前批次添加样本
           </a-button>
-          <a-button key="4" type="primary" @click="createTaskModalNoData(taskDetail.batchCode)">
+          <a-button key="4" type="primary" @click="createTaskModalNoData(taskDetail.batchCode, taskDetail)">
             为当前批次创建分析
           </a-button>
         </template>
@@ -84,9 +84,9 @@ REJECTED = 3, // 未通过 -->
       ref="ssRef"
       @setSelectSample="setSelectSample"
       @update-selection="updateSampleSelection"
-      :sampleId="Number(0)"
-      :socId="Number(0)"
-      :taskId="Number(0)"
+      :sampleId="sampleId"
+      :socId="socId"
+      :taskId="taskId"
     />
 
     <!-- 选择芯片 -->
@@ -147,6 +147,10 @@ const userStore = useUserStore();
 
 const userId = computed(() => userStore.getUserInfo.user.id);
 
+const sampleId = ref<number>(0);
+const socId = ref<number>(0);
+const taskId = ref<number>(0);
+
 // console.log(pop.taskDetail);
 
 const go = useGo()
@@ -177,7 +181,8 @@ const emit = defineEmits<{
   (event: "refreshTaskDetail"): void;
 }>();
 
-const createTaskModalNoData = async (batchCode: string) => {
+const createTaskModalNoData = async (batchCode: string, taskDetail) => {
+  console.log(taskDetail);
   crRef?.value?.showModal();
   try {
     const res = await findMatchingSampleList(batchCode);

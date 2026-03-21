@@ -164,7 +164,7 @@ export const handleCreateUpdateSelectSchemas = (schemas: FormSchema[], i7SerialC
       //     schema.dynamicDisabled = true;
       //   }
       // } else {
-        if (schema.field === "batchCode" || schema.field === 'sourceCode' 
+        if (schema.field === "batchCode" || schema.field === 'sourceCode' || schema.field === 'sampleCode'
           || schema.field === 'failSafeTag' || schema.field === 'checkType' || schema.field === 'waterControl'
           || schema.field === 'i7Code' || schema.field === 'i5Code'
           || schema.field === 'sampleVolume' || schema.field === 'checkReagent'

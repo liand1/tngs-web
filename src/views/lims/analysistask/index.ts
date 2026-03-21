@@ -86,7 +86,17 @@ export const fetchDictData = async () => {
     qcStatusOptions.value = [{
       label: "全部",
       value: null
-    }, ...qcStatusRes.list.filter(item => item.value !== "0")];
+    // }, ...qcStatusRes.list.filter(item => item.value !== "0")];
+    }, {
+      label: "合格",
+      value: 1
+    }, {
+      label: "不合格",
+      value: 2
+    }, {
+      label: "预警",
+      value: 3
+    }];
 
     taskStatusOptions.value = [{
       label: "全部",

@@ -26,8 +26,8 @@
             <a-row v-if="item.id !== 4" :key="item.id" class="system-item">
               <a-col :span="14" class="system-info">
                 <div :class="['icon-wrapper', item.iconClass]">
-                  <img :src="`${item.iconSrc}`" v-if="item.type == 2"/>
-                  <img :src="`/public/resource/svg/${item.iconSrc}.svg`" v-else/>
+                  <img :src="`${item.iconSrc}`" v-if="item.iconSrc?.startsWith('http')"/>
+                  <img :src="`/public/resource/img/${item.iconSrc}.png`" v-else/>
                 </div>
 
                 <div class="system-title">{{ item.title }}</div>

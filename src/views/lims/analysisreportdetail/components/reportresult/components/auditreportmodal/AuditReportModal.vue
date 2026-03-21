@@ -15,10 +15,31 @@
     :canFullscreen="false"
     centered
   >
-    <template #centerFooter>
+    <!-- <template #centerFooter>
       <a-button key="2" danger class="under" @click="handleOk(2)"
         >审核不通过</a-button
       >
+    </template> -->
+
+    <template #footer>
+      <div style="display: flex; justify-content: space-between;">
+        <div>
+          <a-button key="2" danger class="under" @click="showChangeReportSignModal(analysisReportDetails?.reportCheckSign.id, analysisReportDetails?.reportOneSign.id, analysisReportDetails?.reportTwoSign.id)""
+            >更换报告签名</a-button
+          >
+        </div>
+        <div>
+          <a-button key="1" class="under" @click="handleCancel()"
+            >取消</a-button
+          >
+          <a-button key="2" danger class="under" @click="handleOk(2)"
+            >审核不通过</a-button
+          >
+          <a-button key="3" type="primary" class="under" @click="handleOk(1)"
+            >审核通过</a-button
+          >
+        </div>
+      </div>
     </template>
 
     <div class="audit-report-form">
@@ -37,21 +58,18 @@
           <a-col :span="8">
             <div style="display: flex">
               <div class="label"><span>检测员签名: </span>{{ analysisReportDetails?.reportCheckSign.signName }}</div>
-              <div class="link"><a @click="showChangeReportSignModal('1', analysisReportDetails?.reportCheckSign.id)">更换</a></div>
             </div>
             <div class="image"><img :src="analysisReportDetails?.reportCheckSign.imageUrl" /></div>
           </a-col>
           <a-col :span="8">
             <div style="display: flex">
               <div class="label"><span>一审人员签名: </span>{{ analysisReportDetails?.reportOneSign.signName }}</div>
-              <div class="link"><a @click="showChangeReportSignModal('2', analysisReportDetails?.reportOneSign.id)">更换</a></div>
             </div>
             <div class="image"><img :src="analysisReportDetails?.reportOneSign.imageUrl" /></div>
           </a-col>
           <a-col :span="8">
             <div style="display: flex">
               <div class="label"><span>二审人员签名: </span>{{ analysisReportDetails?.reportTwoSign.signName }}</div>
-              <div class="link"><a @click="showChangeReportSignModal('3', analysisReportDetails?.reportTwoSign.id)">更换</a></div>
             </div>
             <div class="image"><img :src="analysisReportDetails?.reportTwoSign.imageUrl" /></div>
           </a-col>
@@ -80,7 +98,6 @@ import { Form } from "ant-design-vue";
 import {
   AnalysisReportAuditRespVO,
   AnalysisTaskAuditRespVO,
-  ReoirtSignVO,
 } from "@/api/lims/analysistask/model";
 import { FindAnalysisReportDetailsModel } from "@/views/lims/analysistaskdetail/model";
 import { auditSampleReport } from "@/api/lims/sampleflow";
@@ -201,21 +218,20 @@ const handleCancel = () => {
   closeModal();
 };
 
-const showChangeReportSignModal = (signType: string, reportSignId: number) => {
-  armRef?.value?.showModal(analysisReportDetails.value, signType, reportSignId);
+const showChangeReportSignModal = (checkSignId: number, oneSignId: number, twoSignId: number) => {
+  armRef?.value?.showModal(analysisReportDetails.value, checkSignId, oneSignId, twoSignId, taskDetails.value);
 };
 
-const refreshReportDetail = (data:ReoirtSignVO) => {
-  if(data.signType == '1') {
-    analysisReportDetails.value.checkSignId = data.id;
-    analysisReportDetails.value.reportCheckSign = data;
-  } else if(data.signType == '2') {
-    analysisReportDetails.value.oneSignId = data.id;
-    analysisReportDetails.value.reportOneSign = data;
-  } else if(data.signType == '3') {
-    analysisReportDetails.value.twoSignId = data.id;
-    analysisReportDetails.value.reportTwoSign = data;
-  }
+const refreshReportDetail = (data:[]) => {
+  let checkeSign = data.find(item => item.signType == "1");
+  analysisReportDetails.value.checkSignId = checkeSign.id;
+  analysisReportDetails.value.reportCheckSign = checkeSign;
+  let oneSign = data.find(item => item.signType == "2");
+  analysisReportDetails.value.oneSignId = oneSign.id;
+  analysisReportDetails.value.reportOneSign = oneSign;
+  let twoSign = data.find(item => item.signType == "3");
+  analysisReportDetails.value.twoSignId = twoSign.id;
+  analysisReportDetails.value.reportTwoSign = twoSign;
 }
 
 // 暴露外部接口

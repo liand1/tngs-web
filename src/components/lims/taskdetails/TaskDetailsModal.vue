@@ -15,7 +15,12 @@
         <div class="status-box">
           <div class="result">
             <div>检出结果值：</div>
-            <span>{{ item.checkValue == null || item.checkValue == undefined ? '-' : item.checkValue}}</span>
+            <span class="limited-text" :style="item.qcStatus === QcStatusEnum.NOT_ENABLED ? {color: '#bfbfbf'}: ''">
+              <a-tooltip placement="top">
+              <template #title>{{ item.checkValue == null || item.checkValue == undefined ? '-' : item.checkValue}}</template>
+                {{ item.checkValue == null || item.checkValue == undefined ? '-' : item.checkValue}}
+              </a-tooltip>
+            </span>
           </div>
 
           <div
@@ -103,6 +108,7 @@ const renderQcValue = (item) => {
     } else {
       r = `${qcValues[0]}%`
     }
+    return "参考检出结果表";
   } else {
     if(item.qcSettingsName === "out_sex") {
       r = `（来源于样本）：${item.qcValue}`;
@@ -224,6 +230,14 @@ defineExpose({
     padding-left:84px;
     font-weight: bold;
     color: #1890ff;
+  }
+
+  .limited-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 </style>

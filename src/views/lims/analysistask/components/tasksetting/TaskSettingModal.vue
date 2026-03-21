@@ -21,7 +21,7 @@
             </a-tooltip>
             <span>（{{ item.abbreviation }}）</span>
           </div>
-          <div v-if="item.name == 'raw_reads' || item.name == 'pollution'" style="color: #999;display: flex; align-items: center;">
+          <div v-if="item.name == 'raw_reads'" style="color: #999;display: flex; align-items: center;">
             <a-input-number
               :value="getRawReadsSettingValue(item.name, 0)"
               :min="0"
@@ -51,7 +51,7 @@
           <a-input-number
             :value="getSettingValue(item.name)"
             :min="0"
-            v-if="!(item.name == 'water_pollution' || item.name == 'out_sex')"
+            v-if="!(item.name == 'water_pollution' || item.name == 'out_sex' || item.name == 'pollution')"
             :precision="2"
             style="width: 130px"
             @change="(value) => updateSettingValue(item.name, value)"
@@ -142,7 +142,8 @@ const items = ref([
     name: "pollution",
     title: "防错标签异常率",
     abbreviation: "污染情况",
-    description: "小于左框内输入值判断为“合格”，大于右框内输入值判断为“不合格”；在两输入框之间的值判断为“预警”",
+    // description: "小于左框内输入值判断为“合格”，大于右框内输入值判断为“不合格”；在两输入框之间的值判断为“预警”",
+    description: "无需预设，以检出结果为准，可设置为不启用",
     tooltip: "【其他标签】检出在该样本【全部标签】检出中的占比",
     addonAfter: "%",
     status: 1,

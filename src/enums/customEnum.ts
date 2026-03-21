@@ -404,7 +404,7 @@ export const CallStatusEnumMap = {
  * 报告区域枚举中文映射
  */
 export const ByLabelEnumMap = {
-  [ByLabelEnum.UNKNOWN]: '未知',
+  [ByLabelEnum.UNKNOWN]: '-',
   [ByLabelEnum.MAIN_REPORT]: '主报告',
   [ByLabelEnum.SUSPECT]: '疑似病原体',
   [ByLabelEnum.HIDDEN]: '不展示',
@@ -413,7 +413,7 @@ export const ByLabelEnumMap = {
 };
 
 export const mutationCodeType = {
-  [0]: '未知',
+  [0]: '-',
   [1]: '不展示',
   [2]: '主报告'
 }

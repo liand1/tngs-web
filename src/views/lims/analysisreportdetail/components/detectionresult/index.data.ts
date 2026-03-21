@@ -84,6 +84,37 @@ export const columns: BasicColumn[] = [
     // }
   },
   {
+    title: "同批最大检出RPM",
+    dataIndex: "batchMaxOutRpm",
+    key: "batchMaxOutRpm",
+    resizable: true,
+    width: 140,
+  },
+  {
+    title: "微生物估测浓度等级",
+    dataIndex: "forecastConc",
+    key: "forecastConc",
+    resizable: true,
+    width: 140,
+    // customRender: ({ text }) => {
+    //   return text ? scientificToPower(text) : ''
+    // }
+  },
+  {
+    title: "多引物情况",
+    dataIndex: "multiprimer",
+    key: "multiprimer",
+    resizable: true,
+    width: 120,
+  },
+  {
+    title: "该病原同批检出数量",
+    dataIndex: "sameBatchOuts",
+    key: "sameBatchOuts",
+    resizable: true,
+    width: 140,
+  },
+  {
     title: "突变频率(%)",
     dataIndex: "levellingReads_tbl",
     key: "levellingReads_tbl",
@@ -119,14 +150,6 @@ export const columns: BasicColumn[] = [
     width: 140,
   },
 
-  {
-    title: "同批最大检出RPM",
-    dataIndex: "batchMaxOutRpm",
-    key: "batchMaxOutRpm",
-    resizable: true,
-    width: 140,
-  },
-
   // {
   //   title: "株系/血清型",
   //   dataIndex: "strain",
@@ -153,33 +176,6 @@ export const columns: BasicColumn[] = [
     dataIndex: "pathogenEnGname",
     key: "pathogenEnGname",
     resizable: true,
-  },
-
-  {
-    title: "微生物估测浓度等级",
-    dataIndex: "forecastConc",
-    key: "forecastConc",
-    resizable: true,
-    width: 140,
-    // customRender: ({ text }) => {
-    //   return text ? scientificToPower(text) : ''
-    // }
-  },
-
-
-  {
-    title: "多引物情况",
-    dataIndex: "multiprimer",
-    key: "multiprimer",
-    resizable: true,
-    width: 120,
-  },
-  {
-    title: "该病原同批检出数量",
-    dataIndex: "sameBatchOuts",
-    key: "sameBatchOuts",
-    resizable: true,
-    width: 140,
   },
   {
     title: "相关亚型",

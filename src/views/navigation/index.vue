@@ -21,8 +21,8 @@
             >
               <div class="card-content">
                 <div :class="['icon-wrapper', item.iconClass]">
-                  <img :src="`${item.iconSrc}`" v-if="item.type == 2"/>
-                  <img :src="`/public/resource/svg/${item.iconSrc}.svg`" v-else/>
+                  <img :src="`${item.iconSrc}`" v-if="item.iconSrc?.startsWith('http')"/>
+                  <img :src="`/public/resource/img/${item.iconSrc}.png`" v-else/>
                 </div>
                 <a-typography-text class="card-title">{{
                   item.title
@@ -115,7 +115,7 @@ async function isAdminUser() {
 //   url: "/dashboard",
 //   iconClass: "new-tngs-icon",
 //   iconSrc: newTngsIcon,
-//   title: "tNGS一步法病源检测(新)",
+//   title: "tNGS一步法病原检测(新)",
 //   hidden: false,
 //   isSwitch: false,
 // },
@@ -124,7 +124,7 @@ async function isAdminUser() {
 //   url: "",
 //   iconClass: "old-tngs-icon",
 //   iconSrc: oldTngsIcon,
-//   title: "tNGS病源检测(旧)",
+//   title: "tNGS病原检测(旧)",
 //   hidden: false,
 //   isSwitch: true,
 // },
@@ -133,7 +133,7 @@ async function isAdminUser() {
 //   url: "",
 //   iconClass: "mngs-icon",
 //   iconSrc: mngsIcon,
-//   title: "mNGS病源检测",
+//   title: "mNGS病原检测",
 //   hidden: false,
 //   isSwitch: true,
 // },

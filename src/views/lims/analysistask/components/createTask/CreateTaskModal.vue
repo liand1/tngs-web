@@ -252,7 +252,7 @@ const go = useGo();
 // 打开模态框方法
 const showModal = async (socToCreateTaskObj: SocToCreateTaskModel) => {
   open.value = true;
-
+  // debugger;
   if (!socToCreateTaskObj) {
     // 清空数据
     formData.name = "";
@@ -270,7 +270,7 @@ const showModal = async (socToCreateTaskObj: SocToCreateTaskModel) => {
       sampleData: [],
     });
     emit("update-sample-selection", -1); // 使用-1表示清空所有选中状态
-
+    
     return;
   }
 
@@ -295,6 +295,7 @@ const showModal = async (socToCreateTaskObj: SocToCreateTaskModel) => {
     rebuildAnalysisTaskReqVO.objectType
   ) {
     const res = await rebuildAnalysisTask(rebuildAnalysisTaskReqVO);
+    // debugger;
     console.log(res);
     if (res.taskInfo) {
       formData.name = res.taskInfo.name;
@@ -480,6 +481,10 @@ const setSelectSample = (sampleData: SampleSocRespVO[], appendFlag: boolean) => 
     counts.push(item);
   });
   checkTypeTags.value = counts;
+
+  emit("update-sample-data", {
+    sampleData: sampleData,
+  });
 };
 
 const handleDeleteFile = (id: number) => {

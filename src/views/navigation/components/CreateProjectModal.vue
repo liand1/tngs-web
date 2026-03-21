@@ -105,7 +105,7 @@ const showModal = async (projectData: any) => {
     resetDefaultSettings();
     return;
   } else {
-    formData.iconSrc = projectData.type == 2 ? projectData.iconSrc : `/public/resource/svg/${projectData.iconSrc}.svg`;
+    formData.iconSrc = projectData.type == 2 ? projectData.iconSrc : `/public/resource/img/${projectData.iconSrc}.png`;
     formData.url = projectData.url;
     formData.title = projectData.title;
     formData.id = projectData.id;
