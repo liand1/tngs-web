@@ -16,7 +16,7 @@
     class="floating-window"
     :style="{
       left: `${windowLeft}px`,
-      top: `${windowTop}px`,
+      bottom: `80px`,
       width: `${windowWidth}px`,
       height: `${windowHeight}px`,
       display: windowMinimized ? 'none' : 'flex',
@@ -322,6 +322,20 @@ const loadWindowState = () => {
       windowTop.value = state.top ?? 100
       windowWidth.value = state.width ?? 400
       windowHeight.value = state.height ?? 500
+    } else {
+      // 如果没有保存的状态，将窗口初始位置紧贴右下角
+      // 使用很小的间距，让窗口尽量靠近右下角
+      const windowRightMargin = 30 // 窗口距离右侧的间距（很小，更靠右）
+      const windowBottomMargin = 0 // 窗口距离底部的间距（很小，更靠下）
+
+      const calculatedLeft = window.innerWidth - windowWidth.value - windowRightMargin
+      const calculatedTop = window.innerHeight - windowHeight.value - windowBottomMargin
+
+      // 边界检测：防止窗口超出可视区域
+      const maxLeft = window.innerWidth - windowWidth.value
+      const maxTop = window.innerHeight - windowHeight.value
+      windowLeft.value = Math.max(0, Math.min(calculatedLeft, maxLeft))
+      windowTop.value = Math.max(0, Math.min(calculatedTop, maxTop))
     }
   } catch (e) {
     console.error('Failed to load window state', e)
