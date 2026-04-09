@@ -4,7 +4,7 @@ import { ref, onMounted } from "vue";
 import ProjectCardSample from "@/assets/images/ProjectCardSample.png";
 import ProjectCardAudit from "@/assets/images/ProjectCardAudit.png";
 import ProjectCardTask from "@/assets/images/ProjectCardTask.png";
-import { findMonthStats } from "@/api/lims/console";
+import {findAllStats} from "@/api/lims/console";
 
 // 统计数据接口
 interface StatCardData {
@@ -17,19 +17,19 @@ interface StatCardData {
 // 模拟数据，真实项目中应通过API获取
 const statCards = ref<StatCardData[]>([
   {
-    title: "本月增加样本",
+    title: "历史样本数",
     value: 0,
     subValue: "0",
     color: "linear-gradient(180deg, #FFF6F7 0%, #FFE3E7 100%)",
   },
   {
-    title: "本月创建任务",
+    title: "历史任务数",
     value: 0,
     subValue: "0%",
     color: "linear-gradient(180deg, #F5FEF2 0%, #E6FEEE 100%)",
   },
   {
-    title: "本月审核通过",
+    title: "历史审核通过",
     value: "119/121",
     subValue: "0%",
     color: "linear-gradient(180deg, #F2F9FE 0%, #E6F4FE 100%)",
@@ -40,7 +40,7 @@ const statCards = ref<StatCardData[]>([
 const loading = ref(true);
 
 onMounted(async () => {
-  const res = await findMonthStats();
+  const res = await findAllStats();
 
   statCards.value[0].value = res.sampleBatchs || 0;
   statCards.value[0].subValue = res.samples || 0;

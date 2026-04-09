@@ -60,3 +60,13 @@ export interface ConsoleMonthStatsRespVO {
   reportPassed?: number; // 报告未通过数
   reportPassRate?: number; // 报告通过率(%)
 }
+
+export interface ConsoleAllStatsRespVO {
+  sampleBatchs?: number; // 样本批次数
+  samples?: number; // 样本数
+  tasks?: number; // 任务数
+  taskQcPassRate?: number; // 任务质控合格率(%)
+  reports?: number; // 报告数
+  reportPassed?: number; // 报告未通过数
+  reportPassRate?: number; // 报告通过率(%)
+}

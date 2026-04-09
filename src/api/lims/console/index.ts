@@ -1,5 +1,8 @@
 import { defHttp } from '@/utils/http/axios';
-import { AnalysisTaskConsoleRespVO, SocSmallRespVO, ConsoleMonthStatsRespVO, MyAnalysisTaskConsoleRespVO } from './model';
+import {
+  AnalysisTaskConsoleRespVO, SocSmallRespVO, ConsoleMonthStatsRespVO, MyAnalysisTaskConsoleRespVO,
+  ConsoleAllStatsRespVO
+} from './model';
 
 
 /**
@@ -46,5 +49,11 @@ export const findMyTaskListByLimit = (limit: number) => {
 export const findMonthStats = () => {
   return defHttp.get<ConsoleMonthStatsRespVO>(
     { url: '/lims/console/find-month-stats' }
+  );
+};
+
+export const findAllStats = () => {
+  return defHttp.get<ConsoleAllStatsRespVO>(
+    { url: '/lims/console/find-all-stats' }
   );
 };
