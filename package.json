@@ -1,6 +1,7 @@
 {
   "name": "yudao-ui-admin-vben",
   "version": "1.1.0",
+  "main": "electron/main.cjs",
   "author": {
     "name": "xingyuv",
     "email": "xingyu4j@vip.qq.com",
@@ -24,6 +25,9 @@
     "bootstrap": "pnpm install",
     "serve": "pnpm dev",
     "dev": "vite",
+    "electron": "electron .",
+    "electron:dev": "cross-env ELECTRON_RENDERER_URL=http://127.0.0.1:5173 electron .",
+    "electron:preview": "pnpm build && electron .",
     "front": "vite --mode front",
     "build": "cross-env NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 vite build",
     "build:production": "cross-env NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 vite build --mode production",
@@ -117,6 +121,7 @@
     "cz-git": "^1.7.1",
     "czg": "^1.7.1",
     "dotenv": "^16.3.1",
+    "electron": "^37.2.0",
     "eslint": "^8.53.0",
     "esno": "^4.0.0",
     "fs-extra": "^11.1.1",

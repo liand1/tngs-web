@@ -1,7 +1,7 @@
+﻿import type { App } from 'vue'
 import type { RouteRecordRaw } from 'vue-router'
-import type { App } from 'vue'
 
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import { basicRoutes } from './routes'
 
 // 白名单应该包含基本静态路由
@@ -14,14 +14,13 @@ function getRouteNames(array: any[]) {
 }
 getRouteNames(basicRoutes)
 
+const isElectronFileProtocol = typeof window !== 'undefined' && window.location.protocol === 'file:'
+
 // app router
-// 创建一个可以被 Vue 应用程序使用的路由实例
 export const router = createRouter({
-  // 创建一个 hash 历史记录。
-  history: createWebHistory(import.meta.env.VITE_PUBLIC_PATH), // createWebHashHistory
-  // 应该添加到路由的初始路由列表。
+  // Electron file:// 场景下使用 hash 路由，避免刷新或直达路由时丢失页面
+  history: isElectronFileProtocol ? createWebHashHistory() : createWebHistory(import.meta.env.VITE_PUBLIC_PATH),
   routes: basicRoutes as unknown as RouteRecordRaw[],
-  // 是否应该禁止尾部斜杠。默认为假
   strict: true,
   scrollBehavior: () => ({ left: 0, top: 0 }),
 })
@@ -36,7 +35,6 @@ export function resetRouter() {
 }
 
 // config router
-// 配置路由器
 export function setupRouter(app: App<Element>) {
   app.use(router)
 }
