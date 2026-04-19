@@ -26,7 +26,7 @@
     "serve": "pnpm dev",
     "dev": "vite",
     "electron": "electron .",
-    "electron:dev": "cross-env ELECTRON_RENDERER_URL=http://127.0.0.1:5173 electron .",
+    "electron:dev": "cross-env ELECTRON_RENDERER_URL=http://127.0.0.1:8080 electron .",
     "electron:preview": "pnpm build && electron .",
     "front": "vite --mode front",
     "build": "cross-env NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 vite build",

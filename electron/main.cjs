@@ -17,7 +17,7 @@ function createMainWindow() {
   })
 
   if (isDev) {
-    const devUrl = process.env.ELECTRON_RENDERER_URL || 'http://127.0.0.1:5173'
+    const devUrl = process.env.ELECTRON_RENDERER_URL || 'http://127.0.0.1:8080'
     win.loadURL(devUrl)
     return
   }
