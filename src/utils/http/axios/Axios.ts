@@ -15,7 +15,9 @@ import type { RequestOptions, Result, UploadFileParams } from '@/types/axios'
 import { ContentTypeEnum, RequestEnum } from '@/enums/httpEnum'
 import { downloadByData } from '@/utils/file/download'
 import { useGlobSetting } from '@/hooks/setting'
-import { getAccessToken, getRefreshToken, getTenantId, setAccessToken } from '@/utils/auth'
+import { clearAuthCache, getAccessToken, getEncryptKey, getRefreshToken, getTenantId, setAccessToken, setEncryptKey, setRefreshToken } from '@/utils/auth'
+import { useUserStoreWithOut } from '@/store/modules/user'
+import { aesGcmDecryptJson, isEncryptedPayload } from '@/utils/http/aesCrypto'
 
 export * from './axiosTransform'
 
@@ -24,6 +26,11 @@ const globSetting = useGlobSetting()
 let requestList: any[] = []
 // 是否正在刷新中
 let isRefreshToken = false
+
+function clearInvalidEncryptedSession() {
+  clearAuthCache(true)
+  useUserStoreWithOut().resetState()
+}
 
 /**
  * @description:  axios 模块
@@ -58,6 +65,43 @@ export class VAxios {
     axios.defaults.headers.common['tenant-id'] = getTenantId() as number
     const refreshToken = getRefreshToken()
     return axios.post(`${globSetting.apiUrl}/system/auth/refresh-token?refreshToken=${refreshToken}`)
+  }
+
+  private async decryptResponse(res: AxiosResponse<any>) {
+    const encryptedPayload = isEncryptedPayload(res.data)
+      ? res.data
+      : isEncryptedPayload(res.data?.data)
+        ? res.data.data
+        : undefined
+
+    if (!encryptedPayload)
+      return res
+
+    const requestEncryptKey = (res.config as Recordable).__encryptKey
+    const currentEncryptKey = getEncryptKey()
+    const encryptKeys = Array.from(new Set([requestEncryptKey, currentEncryptKey].filter(Boolean)))
+    if (!encryptKeys.length) {
+      clearInvalidEncryptedSession()
+      throw new Error('Missing encryptKey for encrypted response.')
+    }
+
+    let lastError: unknown
+    for (const encryptKey of encryptKeys) {
+      try {
+        const decryptedData = await aesGcmDecryptJson(encryptedPayload, encryptKey)
+        if (isEncryptedPayload(res.data))
+          res.data = decryptedData
+        else
+          res.data.data = decryptedData
+
+        return res
+      }
+      catch (error) {
+        lastError = error
+      }
+    }
+
+    throw lastError || new Error('Failed to decrypt encrypted response.')
   }
 
   /**
@@ -102,7 +146,7 @@ export class VAxios {
     const axiosCanceler = new AxiosCanceler()
 
     // 请求拦截器配置处理
-    this.axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+    this.axiosInstance.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
       // If cancel repeat request is turned on, then cancel repeat request is prohibited
       const requestOptions
         = (config as unknown as any).requestOptions ?? this.options.requestOptions
@@ -111,7 +155,7 @@ export class VAxios {
       !ignoreCancelToken && axiosCanceler.addPending(config)
 
       if (requestInterceptors && isFunction(requestInterceptors))
-        config = requestInterceptors(config, this.options)
+        config = await requestInterceptors(config, this.options)
 
       return config
     }, undefined)
@@ -133,6 +177,7 @@ export class VAxios {
         if (res.data.type === 'application/json')
           res.data = await new Response(res.data).json()
       }
+      res = await this.decryptResponse(res)
       // 处理 accessToken 过期的情况
       if (res.data.code === 401) {
         // 如果未认证，并且未进行刷新令牌，说明可能是访问令牌过期了
@@ -144,7 +189,10 @@ export class VAxios {
             try {
               const refreshTokenRes = await this.refreshToken()
               // 2.1 刷新成功，则回放队列的请求 + 当前请求
-              setAccessToken(refreshTokenRes.data.data.accessToken)
+              const tokenData = refreshTokenRes.data.data
+              setAccessToken(tokenData.accessToken)
+              setRefreshToken(tokenData.refreshToken || getRefreshToken())
+              setEncryptKey(tokenData.encryptKey)
               ;(config as Recordable).headers.Authorization = `Bearer ${getAccessToken()}`
               requestList.forEach((cb: any) => {
                 cb()

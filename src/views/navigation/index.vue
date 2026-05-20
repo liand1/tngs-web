@@ -64,6 +64,7 @@ const userStore = useUserStore();
 const displaySettingsModalRef =
   ref<InstanceType<typeof DisplaySettingsModal>>();
 const externalLinks = ref<ExternalLink[]>([]);
+const canSaveSettings = ref(false);
 
 const dictData = ref<DictDataVO>();
 const getCreateType = async () => {
@@ -71,12 +72,67 @@ const getCreateType = async () => {
   return res;
 };
 
+function parseSubSystemSettingsValue(value?: string): ExternalLink[] | null {
+  if (!value) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed)) {
+      return parsed;
+    }
+
+    if (parsed && typeof parsed === "object" && "title" in parsed) {
+      return [parsed as ExternalLink];
+    }
+  } catch {
+    // Normal dictionary text, not a navigation JSON config.
+  }
+
+  return null;
+}
+
+function parseSubSystemSettings(record: DictDataVO): ExternalLink[] | null {
+  return (
+    parseSubSystemSettingsValue(record.label) ||
+    parseSubSystemSettingsValue(record.value) ||
+    parseSubSystemSettingsValue(record.remark)
+  );
+}
+
+function createLinksFromDictRows(list: DictDataVO[]): ExternalLink[] {
+  return list
+    .filter((item) => Number(item.status) === 0)
+    .map((item) => ({
+      id: item.sort || item.id,
+      title: item.label,
+      url: item.value,
+      iconClass: item.cssClass,
+      iconSrc: item.cssClass,
+      hidden: false,
+      isSwitch: true,
+    }))
+    .filter((item) => !!item.title);
+}
+
 onMounted(async () => {
   const res = await getCreateType();
 
   if (res.list.length > 0) {
-    let subSystemSettings = JSON.parse(res.list[0].label);
-    dictData.value = res.list[0];
+    const parsedRecord = res.list
+      .map((item) => ({ item, settings: parseSubSystemSettings(item) }))
+      .find(({ settings }) => settings);
+
+    const settingRecord = parsedRecord?.item || res.list[0];
+    let subSystemSettings = parsedRecord?.settings || createLinksFromDictRows(res.list);
+    canSaveSettings.value = !!parsedRecord;
+    if (!subSystemSettings.length) {
+      console.warn("sub_system_settings dictionary data is empty.", res.list);
+      return;
+    }
+
+    dictData.value = settingRecord;
     
     const isAdmin = await isAdminUser();
     //只有adminuser用户才能操作更多按钮
@@ -99,10 +155,15 @@ onMounted(async () => {
 
 // 判断是否是adminuser
 async function isAdminUser() {
-  const res = await getUserInfo();
-  if (res.user.id === 1) {
-    return true;
+  try {
+    const res = await getUserInfo();
+    if (res.user.id === 1) {
+      return true;
+    }
+  } catch (error) {
+    console.warn("Failed to get current user info.", error);
   }
+
   return false;
 }
 
@@ -154,8 +215,10 @@ const setExternalLinks = (newVal: ExternalLink[]) => {
     let more = externalLinks.value.splice(moreId, 1);
     externalLinks.value.push(...more);
   }
-  dictData.value!.label = JSON.stringify(newVal);
-  updateDictData(dictData.value!);
+  if (canSaveSettings.value && dictData.value) {
+    dictData.value.label = JSON.stringify(newVal);
+    updateDictData(dictData.value);
+  }
 };
 
 function handleCardClick(item: any) {

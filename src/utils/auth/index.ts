@@ -1,8 +1,7 @@
 import type { BasicKeys } from '@/utils/cache/persistent'
 import { Persistent } from '@/utils/cache/persistent'
-import { ACCESS_TOKEN_KEY, CacheTypeEnum, REFRESH_TOKEN_KEY, TENANT_ID_KEY } from '@/enums/cacheEnum'
+import { ACCESS_TOKEN_KEY, CacheTypeEnum, ENCRYPT_KEY, REFRESH_TOKEN_KEY, TENANT_ID_KEY } from '@/enums/cacheEnum'
 import projectSetting from '@/settings/projectSetting'
-import { useUserStore } from '@/store/modules/user'
 const { permissionCacheType } = projectSetting
 const isLocal = permissionCacheType === CacheTypeEnum.LOCAL
 
@@ -20,6 +19,14 @@ export function getRefreshToken(): string {
 
 export function setRefreshToken(value: string) {
   return setAuthCache(REFRESH_TOKEN_KEY, value)
+}
+
+export function getEncryptKey(): string {
+  return getAuthCache(ENCRYPT_KEY)
+}
+
+export function setEncryptKey(value: string | null | undefined) {
+  return setAuthCache(ENCRYPT_KEY, value)
 }
 
 export function getTenantId() {

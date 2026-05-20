@@ -9,7 +9,6 @@ import { createLocalStorage, createSessionStorage } from '@/utils/cache'
 import type {
   MULTIPLE_TABS_KEY,
   PROJ_CFG_KEY,
-  REFRESH_TOKEN_KEY,
   ROLES_KEY,
   TENANT_ID_KEY,
 } from '@/enums/cacheEnum'
@@ -17,7 +16,9 @@ import {
   ACCESS_TOKEN_KEY,
   APP_LOCAL_CACHE_KEY,
   APP_SESSION_CACHE_KEY,
+  ENCRYPT_KEY,
   LOCK_INFO_KEY,
+  REFRESH_TOKEN_KEY,
   USER_INFO_KEY,
 } from '@/enums/cacheEnum'
 import { DEFAULT_CACHE_TIME } from '@/settings/encryptionSetting'
@@ -25,6 +26,7 @@ import { DEFAULT_CACHE_TIME } from '@/settings/encryptionSetting'
 interface BasicStore {
   [ACCESS_TOKEN_KEY]: string | number | null | undefined
   [REFRESH_TOKEN_KEY]: string | number | null | undefined
+  [ENCRYPT_KEY]: string | null | undefined
   [TENANT_ID_KEY]: number | null | undefined
   [USER_INFO_KEY]: UserInfo
   [ROLES_KEY]: string[]
@@ -108,11 +110,11 @@ window.addEventListener('beforeunload', () => {
   // LOCK_INFO_KEY 在锁屏和解锁时写入，此处也不应修改
   ls.set(APP_LOCAL_CACHE_KEY, {
     ...omit(localMemory.getCache, LOCK_INFO_KEY),
-    ...pick(ls.get(APP_LOCAL_CACHE_KEY), [ACCESS_TOKEN_KEY, USER_INFO_KEY, LOCK_INFO_KEY]),
+    ...pick(ls.get(APP_LOCAL_CACHE_KEY), [ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, ENCRYPT_KEY, USER_INFO_KEY, LOCK_INFO_KEY]),
   })
   ss.set(APP_SESSION_CACHE_KEY, {
     ...omit(sessionMemory.getCache, LOCK_INFO_KEY),
-    ...pick(ss.get(APP_SESSION_CACHE_KEY), [ACCESS_TOKEN_KEY, USER_INFO_KEY, LOCK_INFO_KEY]),
+    ...pick(ss.get(APP_SESSION_CACHE_KEY), [ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, ENCRYPT_KEY, USER_INFO_KEY, LOCK_INFO_KEY]),
   })
 })
 

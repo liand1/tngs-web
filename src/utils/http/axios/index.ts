@@ -13,12 +13,13 @@ import { useGlobSetting } from '@/hooks/setting'
 import { useMessage } from '@/hooks/web/useMessage'
 import { ContentTypeEnum, RequestEnum, ResultEnum } from '@/enums/httpEnum'
 import { isEmpty, isNull, isString, isUndefined } from '@/utils/is'
-import { getAccessToken, getTenantId } from '@/utils/auth'
+import { getAccessToken, getEncryptKey, getTenantId } from '@/utils/auth'
 import { deepMerge, setObjToUrlParams } from '@/utils'
 import { useErrorLogStoreWithOut } from '@/store/modules/errorLog'
 import { useI18n } from '@/hooks/web/useI18n'
 import { useUserStoreWithOut } from '@/store/modules/user'
 import { AxiosRetry } from '@/utils/http/axios/axiosRetry'
+import { aesGcmEncryptJson, isEncryptedPayload } from '@/utils/http/aesCrypto'
 
 const globSetting = useGlobSetting()
 const urlPrefix = globSetting.urlPrefix
@@ -26,7 +27,39 @@ const tenantEnable = globSetting.tenantEnable
 const { createMessage, createErrorModal, createSuccessModal } = useMessage()
 
 // 请求白名单，无须token的接口
-const whiteList: string[] = ['/login', '/refresh-token']
+const whiteList: string[] = [
+  '/login',
+  '/logout',
+  '/sms-login',
+  '/send-sms-code',
+  '/refresh-token',
+  '/captcha/get',
+  '/captcha/check',
+  '/oauth2/authorize',
+]
+
+function isWhiteUrl(url = '') {
+  return whiteList.some(item => url.includes(item))
+}
+
+function shouldEncryptRequest(config: Recordable) {
+  if (config.requestOptions?.withToken === false)
+    return false
+
+  if (isWhiteUrl(config.url))
+    return false
+
+  if (config.responseType === 'blob' || config.responseType === 'arraybuffer')
+    return false
+
+  if (config.data instanceof FormData)
+    return false
+
+  if ((isEncryptedPayload(config.data) || isEncryptedPayload(config.params)) && !config.__rawEncryptData)
+    return false
+
+  return !!getAccessToken() && !!getEncryptKey()
+}
 
 /**
  * @description: 数据处理，方便区分多种处理方式
@@ -119,7 +152,10 @@ const transform: AxiosTransform = {
     const params = config.params || {}
     const data = config.data || false
     formatDate && data && !isString(data) && formatRequestDate(data)
-    if (config.method?.toUpperCase() === RequestEnum.GET) {
+    if (config.method?.toUpperCase() === RequestEnum.GET && shouldEncryptRequest(config as Recordable)) {
+      config.data = undefined
+    }
+    else if (config.method?.toUpperCase() === RequestEnum.GET) {
       if (!isString(params)) {
         // 给 get 请求加上时间戳参数，避免从缓存中拿数据。
         let url = `${config.url}?`
@@ -184,16 +220,10 @@ const transform: AxiosTransform = {
   /**
    * @description: 请求拦截器处理
    */
-  requestInterceptors: (config, options) => {
+  requestInterceptors: async (config, options) => {
     // 是否需要设置 token
-    let isToken = (config as Recordable)?.requestOptions?.withToken === false
-    isToken = whiteList.some((v) => {
-      if (config.url) {
-        config.url.includes(v)
-        return false
-      }
-      return true
-    })
+    const requestConfig = config as Recordable
+    const isToken = requestConfig?.requestOptions?.withToken === false || isWhiteUrl(config.url)
     // 请求之前处理config
     const token = getAccessToken()
     if (token && !isToken) {
@@ -207,6 +237,26 @@ const transform: AxiosTransform = {
       const tenantId = getTenantId()
       if (tenantId)
         (config as Recordable).headers['tenant-id'] = tenantId
+    }
+    if (shouldEncryptRequest(requestConfig)) {
+      const encryptKey = getEncryptKey()
+      if (!encryptKey)
+        return config
+
+      const method = config.method?.toUpperCase()
+      const source = requestConfig.__rawEncryptData ?? (method === RequestEnum.GET ? config.params : config.data)
+      const payload = await aesGcmEncryptJson(source ?? {}, encryptKey)
+      requestConfig.__rawEncryptData = source ?? {}
+      requestConfig.__encryptKey = encryptKey
+
+      if (method === RequestEnum.GET) {
+        config.params = payload
+        config.data = undefined
+      }
+      else {
+        config.data = payload
+      }
+      ;(config as Recordable).headers['Content-Type'] = ContentTypeEnum.JSON
     }
     return config
   },

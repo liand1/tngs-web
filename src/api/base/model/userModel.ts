@@ -25,6 +25,7 @@ export interface LoginResultModel {
   accessToken: string
   refreshToken: string
   expiresTime: number
+  encryptKey: string | null
 }
 
 /**

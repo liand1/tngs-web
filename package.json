@@ -110,6 +110,7 @@
     "@types/qs": "^6.9.10",
     "@types/sortablejs": "^1.15.5",
     "@unocss/eslint-config": "^0.57.3",
+    "@unocss/eslint-plugin": "^0.57.7",
     "@vitejs/plugin-vue": "4.4.1",
     "@vitejs/plugin-vue-jsx": "^3.0.2",
     "@vue/compiler-sfc": "^3.3.8",

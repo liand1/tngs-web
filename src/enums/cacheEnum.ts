@@ -3,6 +3,8 @@ export const ACCESS_TOKEN_KEY = 'ACCESS_TOKEN__'
 
 export const REFRESH_TOKEN_KEY = 'REFRESH_TOKEN__'
 
+export const ENCRYPT_KEY = 'ENCRYPT_KEY__'
+
 export const TENANT_ID_KEY = 'TENANT_ID__'
 
 export const LOCALE_KEY = 'LOCALE__'

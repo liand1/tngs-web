@@ -7,7 +7,7 @@ import { store } from '@/store'
 import { router } from '@/router'
 import type { RoleEnum } from '@/enums/roleEnum'
 import { PageEnum } from '@/enums/pageEnum'
-import { ACCESS_TOKEN_KEY, CacheTypeEnum, REFRESH_TOKEN_KEY, ROLES_KEY, USER_INFO_KEY } from '@/enums/cacheEnum'
+import { ACCESS_TOKEN_KEY, CacheTypeEnum, ENCRYPT_KEY, REFRESH_TOKEN_KEY, ROLES_KEY, USER_INFO_KEY } from '@/enums/cacheEnum'
 import { PAGE_NOT_FOUND_ROUTE } from '@/router/routes/basic'
 import { usePermissionStore } from '@/store/modules/permission'
 import { useI18n } from '@/hooks/web/useI18n'
@@ -22,6 +22,7 @@ export interface UserState {
   userInfo: Nullable<GetUserInfoModel>
   accessToken?: string
   refreshToken?: string
+  encryptKey?: string
   roleList: RoleEnum[]
   sessionTimeout?: boolean
   lastUpdateTime: number
@@ -35,6 +36,7 @@ export const useUserStore = defineStore('app-user', {
     // token
     accessToken: undefined,
     refreshToken: undefined,
+    encryptKey: undefined,
     // roleList
     roleList: [],
     // Whether the login expired
@@ -53,6 +55,9 @@ export const useUserStore = defineStore('app-user', {
     },
     getRefreshToken(state): string {
       return state.refreshToken || getAuthCache<string>(REFRESH_TOKEN_KEY)
+    },
+    getEncryptKey(state): string {
+      return state.encryptKey || getAuthCache<string>(ENCRYPT_KEY)
     },
     getRoleList(state): RoleEnum[] {
       return state.roleList.length > 0 ? state.roleList : getAuthCache<RoleEnum[]>(ROLES_KEY)
@@ -77,6 +82,10 @@ export const useUserStore = defineStore('app-user', {
       this.refreshToken = info || '' // for null or undefined value
       setAuthCache(REFRESH_TOKEN_KEY, info)
     },
+    setEncryptKey(info: string | null | undefined) {
+      this.encryptKey = info || ''
+      setAuthCache(ENCRYPT_KEY, info)
+    },
     setRoleList(roleList: RoleEnum[]) {
       this.roleList = roleList
       setAuthCache(ROLES_KEY, roleList)
@@ -96,6 +105,8 @@ export const useUserStore = defineStore('app-user', {
     resetState() {
       this.userInfo = null
       this.accessToken = ''
+      this.refreshToken = ''
+      this.encryptKey = ''
       this.roleList = []
       this.sessionTimeout = false
       this.isLocal = CacheTypeEnum.LOCAL
@@ -113,7 +124,7 @@ export const useUserStore = defineStore('app-user', {
       try {
         const { goHome = true, mode, immediate, ...loginParams } = params
         const data = await loginApi(loginParams, mode)
-        const { accessToken, refreshToken } = data
+        const { accessToken, refreshToken, encryptKey } = data
 
         // this.resetState()
         // clearAuthCache(true)
@@ -127,6 +138,7 @@ export const useUserStore = defineStore('app-user', {
         // save token
         this.setAccessToken(accessToken)
         this.setRefreshToken(refreshToken)
+        this.setEncryptKey(encryptKey)
         return this.afterLoginAction(goHome)
       }
       catch (error) {
@@ -142,10 +154,11 @@ export const useUserStore = defineStore('app-user', {
       try {
         const { goHome = true, mode, ...smsLoginParams } = params
         const data = await smsLogin(smsLoginParams, mode)
-        const { accessToken, refreshToken } = data
+        const { accessToken, refreshToken, encryptKey } = data
         // save token
         this.setAccessToken(accessToken)
         this.setRefreshToken(refreshToken)
+        this.setEncryptKey(encryptKey)
         return this.afterLoginAction(goHome)
       }
       catch (error) {
